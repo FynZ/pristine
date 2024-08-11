@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -26,34 +30,38 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+var Pokemons = new Dictionary<int, Pokemon>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    {1, new Pokemon(1, "Bulbizarre", new Uri("https://www.pokepedia.fr/images/thumb/e/ef/Bulbizarre-RFVF.png/250px-Bulbizarre-RFVF.png"), "Plante")},
+    {2, new Pokemon(2, "Herbizarre", new Uri("https://www.pokepedia.fr/images/thumb/4/44/Herbizarre-RFVF.png/250px-Herbizarre-RFVF.png"), "Plante")},
+    {3, new Pokemon(3, "Florizarre", new Uri("https://www.pokepedia.fr/images/thumb/4/42/Florizarre-RFVF.png/250px-Florizarre-RFVF.png"), "Plante")},
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/api/pokemons", () =>
 {
-    var forecast =  Enumerable
-        .Range(1, 5)
-        .Select(index =>
-            new WeatherForecast
-            (
-                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                Random.Shared.Next(-20, 55),
-                summaries[Random.Shared.Next(summaries.Length)]
-            ))
+    var pokemons = Pokemons.Values
+        .Select(x => x)
         .ToArray();
 
-    return forecast;
+    return TypedResults.Ok(pokemons);
 })
-.WithName("GetWeatherForecast")
+.WithName("pokemons")
 .WithOpenApi();
+
+app.MapGet("/api/pokemons/{id}", Results<NotFound, Ok<Pokemon>>([FromRoute] int id) =>
+    {
+        if (Pokemons.TryGetValue(id, out var pokemon))
+        {
+            return TypedResults.Ok(pokemon);
+        }
+
+        return TypedResults.NotFound();
+    })
+    .WithName("pokemon")
+    .WithOpenApi();
 
 app.MapFallbackToFile("/index.html");
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+public record Pokemon(int Id, string Name, Uri Image, string Type);

@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import AppMenu from './components/naviguation/AppMenu.vue'
+import AppHeader from './components/naviguation/AppHeader.vue';
 </script>
 
 <template>
-  <header>
+  <!-- <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
@@ -15,9 +16,19 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/about">About</RouterLink>
       </nav>
     </div>
-  </header>
+  </header> -->
 
-  <RouterView />
+  <body>
+    <AppHeader />
+    <div class="grid">
+      <div class="col-2">
+        <AppMenu/>
+      </div>
+      <div class="col-10">
+        <RouterView />
+      </div>
+    </div>
+  </body>
 </template>
 
 <style scoped>

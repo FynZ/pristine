@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import MobileView from '../views/devices/MobileView.vue'
+import DesktopView from '../views/devices/DesktopView.vue'
+import TabletView from '../views/devices/TabletView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,6 +11,21 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView
+    },
+    {
+      path: '/devices/mobile',
+      name: 'mobile',
+      component: MobileView
+    },
+    {
+      path: '/devices/desktop',
+      name: 'desktop',
+      component: DesktopView
+    },
+    {
+      path: '/devices/tablet',
+      name: 'tablet',
+      component: TabletView
     },
     {
       path: '/about',
